@@ -123,3 +123,5 @@ LOGIN_REDIRECT_URL = '/courses/profile'
 LOGIN_URL = '/login'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+AUTH_USER_MODEL = 'courses.User'
+AUTHENTICATION_BACKENDS = ['courses.backend.ModelBackend']

@@ -1,5 +1,7 @@
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import AbstractUser, User
+from django.contrib.auth.models import PermissionsMixin, AbstractUser as AbstractBaseUser
 from django.db import models
 from django_enumfield import enum
 
@@ -40,6 +42,25 @@ class YearChoices(enum.Enum):
         FORTH_YEAR: '4',
         FIFTH_YEAR: '5'
     }
+
+
+class AbstractUser(AbstractBaseUser):
+    user_type = models.ForeignKey(ContentType, null=True, editable=False)
+
+    class Meta:
+        verbose_name = _('User')
+        verbose_name_plural = _('Users')
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if not self.user_type_id:
+            self.user_type = ContentType.objects.get_for_model(self, for_concrete_model=False)
+        super(AbstractUser, self).save(*args, **kwargs)
+
+
+class User(AbstractUser):
+    class Meta(AbstractUser.Meta):
+        swappable = 'AUTH_USER_MODEL'
 
 
 class Professor(User):
