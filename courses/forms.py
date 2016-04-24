@@ -1,7 +1,9 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, HTML
+from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from django.forms import BooleanField, CheckboxInput
+from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
+from django.forms import BooleanField, CheckboxInput, TextInput
 
 
 class LoginForm(AuthenticationForm):
@@ -23,3 +25,8 @@ class LoginForm(AuthenticationForm):
         if not self.cleaned_data.get('remember-me'):
             self.request.session.set_expiry(0)
         super().clean()
+
+
+class UserCreationForm(BaseUserCreationForm):
+    first_name = forms.CharField(max_length=30, required=True, widget=TextInput(attrs={'size': '25'}))
+    last_name = forms.CharField(max_length=30, required=True, widget=TextInput(attrs={'size': '25'}))
