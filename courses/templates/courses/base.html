@@ -15,7 +15,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">BSU Courses</a>
+            <a class="navbar-brand" href="{% url 'courses:index' %}">BSU Courses</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -36,12 +36,18 @@
                     </ul>
                 </li>
             </ul>
-            {% if user.is_authenticated %}
             <ul class="nav navbar-nav navbar-right">
-                <li><span>Welcome, {{ user.username }}.</span></li>
-                <li><a href="{% url 'logout' %}?next={% url 'login' %}"> Logout</a></li>
-            </ul>
+            {% if user.is_authenticated %}
+                <li><a href="{% if user.user_type.name == 'Professor' %}
+                                {% url 'courses:professor_profile' user.username %}
+                             {% elif user.user_type.name == 'Student' %}
+                                {% url 'courses:student_profile' user.username %}
+                             {% endif %}">Welcome, {{ user.first_name }}.</a></li>
+                <li><a href="{% url 'courses:logout' %}?next={% url 'courses:login' %}"> Logout</a></li>
+            {% else %}
+                <span><a href="{% url 'courses:login' %}" class="btn btn-primary btn-md" role="button">Login</a></span>
             {% endif %}
+            </ul>
         </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->
 </nav>

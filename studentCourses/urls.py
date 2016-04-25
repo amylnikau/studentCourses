@@ -15,13 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.contrib.auth.views import logout
-
-from courses.views import login
+from django.http import HttpResponseRedirect
 
 urlpatterns = [
     url(r'^courses/', include('courses.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^login/$', login, name='login'),
-    url(r'^logout/$', logout, name='logout')
+    url(r'^$', lambda r: HttpResponseRedirect('courses/')),
+
 ]

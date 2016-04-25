@@ -5,6 +5,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.forms import BooleanField, CheckboxInput, TextInput
 
+from courses.models import USER_TYPE_MODELS
+
 
 class LoginForm(AuthenticationForm):
     remember_me = BooleanField(required=False, widget=CheckboxInput())
@@ -22,9 +24,15 @@ class LoginForm(AuthenticationForm):
         )
 
     def clean(self):
+        super().clean()
+        if self.user_cache and self.user_cache.user_type.name not in USER_TYPE_MODELS:
+            raise forms.ValidationError(
+                self.error_messages['invalid_login'],
+                code='invalid_login',
+                params={'username': self.username_field.verbose_name},
+            )
         if not self.cleaned_data.get('remember-me'):
             self.request.session.set_expiry(0)
-        super().clean()
 
 
 class UserCreationForm(BaseUserCreationForm):

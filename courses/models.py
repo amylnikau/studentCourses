@@ -6,6 +6,9 @@ from django.db import models
 from django_enumfield import enum
 
 
+USER_TYPE_MODELS = ['Student', 'Professor']
+
+
 class DepartmentChoices(enum.Enum):
     FAMCS = 0
     MMF = 1
