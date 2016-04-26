@@ -52,7 +52,6 @@ class AbstractUser(AbstractBaseUser):
 
     class Meta:
         verbose_name = _('User')
-        verbose_name_plural = _('Users')
         abstract = True
 
     def save(self, *args, **kwargs):

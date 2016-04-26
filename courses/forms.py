@@ -31,7 +31,7 @@ class LoginForm(AuthenticationForm):
                 code='invalid_login',
                 params={'username': self.username_field.verbose_name},
             )
-        if not self.cleaned_data.get('remember-me'):
+        if not self.cleaned_data.get('remember_me'):
             self.request.session.set_expiry(0)
 
 
