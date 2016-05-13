@@ -1,0 +1,124 @@
+{% extends 'courses/professor_profile_base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+{% block extrascript %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(function () {
+
+            function onSelectForm() {
+                $('#id_courseoffering_set-0-DELETE').prop('checked', $('.form-checkbox:checked').length == checkboxes.length);
+                $("#btn_delete").attr("disabled", !checkboxes.is(":checked"));
+            }
+
+            function onSelectCourse() {
+                $("#btn_add").attr("disabled", !catalogCheckboxes.is(":checked"));
+            }
+
+            var checkboxes = $(".form-checkbox");
+            var catalogCheckboxes = $(".catalog-checkbox");
+
+            $('#id_courseoffering_set-0-DELETE').click(function () {
+                if ($(this).is(':checked'))
+                    checkboxes.prop('checked', true).trigger("change");
+                else
+                    checkboxes.prop('checked', false).trigger("change");
+            });
+
+            checkboxes.change(onSelectForm);
+
+            catalogCheckboxes.change(onSelectCourse);
+
+            $('.table.table-striped').prepFixedHeader().fixedHeader();
+
+            $('#btn_save').click(function () {
+                checkboxes.prop('checked', false);
+            });
+            $("#btn_add").click(function () {
+                catalogCheckboxes.each(function () {
+                    if ($(this).is(":checked")) {
+                        var totalForms = $('#id_courseoffering_set-TOTAL_FORMS');
+                        var recordId = parseInt(totalForms.val());
+                        var courseTitle = $(this).closest('td').next().text().trim();
+                        $('#id_CourseOfferingForm_table').find('tbody').append('<tr class="item"> <td id="div_id_courseoffering_set-{0}-DELETE" class="form-group row"> <div class="controls"><input id="id_courseoffering_set-{0}-DELETE" class="form-checkbox" name="courseoffering_set-{0}-DELETE" type="checkbox"> </div> </td> <input id="id_courseoffering_set-{0}-professor" name="courseoffering_set-{0}-professor" type="hidden" value="{1}"> <td id="div_id_courseoffering_set-{0}-course_title" class="form-group row"> <div class="controls "> <input class="textinput textInput form-control" id="id_courseoffering_set-{0}-course_title" maxlength="100" name="courseoffering_set-{0}-course_title" type="text" value="{2}" readonly=""> </div> </td> <td id="div_id_courseoffering_set-{0}-prerequisites" class="form-group row"> <div class="controls "> <textarea class="textarea form-control" cols="40" id="id_courseoffering_set-{0}-prerequisites" maxlength="500" name="courseoffering_set-{0}-prerequisites" rows="1"></textarea> </div> </td> <input id="id_courseoffering_set-{0}-id" name="courseoffering_set-{0}-id" type="hidden"> </tr>'.format(recordId, {{ user_id }},courseTitle));
+                        $('.item:last').hide();
+                        totalForms.val(recordId + 1);
+                    }
+                });
+            })
+        });
+    </script>
+{% endblock %}
+{% block main_content %}
+    <h4>Select courses</h4>
+    <div class="col-sm-5">
+        {% if formset|length %}
+            <h4>My courses</h4>
+        {% else %}
+            <h5>You have no courses. Please add from course catalog</h5>
+        {% endif %}
+        <form id="courseForm" method="post">
+            <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <p>You are about to delete course(s), this procedure is irreversible.</p>
+
+                            <p>Do you want to proceed?</p>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-danger" value="Delete"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% crispy formset helper %}
+            {% if formset|length %}
+                <button id="btn_delete" type="button" class="btn btn-default pull-right" data-toggle="modal"
+                        data-target="#confirm-delete" disabled>Delete
+                </button>
+                <input id="btn_save" type="submit" class="btn btn-success pull-right" value="Save"/>
+            {% endif %}
+        </form>
+    </div>
+    {% if courses %}
+        <div class="col-sm-1"></div>
+        <div class="col-sm-5">
+            <h4>Course catalog</h4>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Course title</th>
+                </tr>
+                </thead>
+                {% for course in courses %}
+                    <tr>
+                        <td>
+                            <div class="controls"><input class="catalog-checkbox" type="checkbox"/></div>
+                        </td>
+                        <td>
+                            <div class="courseTitle">{{ course }}</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <button id="btn_add" form="courseForm" class="btn btn-primary pull-right" disabled>Add to my
+                courses
+            </button>
+        </div>
+    {% else %}
+        <h4>Course catalog not available</h4>
+    {% endif %}
+{% endblock %}

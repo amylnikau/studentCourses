@@ -82,6 +82,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
+    'external': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db_external.sqlite3'),
+    },
 }
 
 
@@ -121,6 +125,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 LOGIN_URL = '/login'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 AUTH_USER_MODEL = 'courses.User'
 AUTHENTICATION_BACKENDS = ['courses.backend.ModelBackend']
+DATABASE_ROUTERS = ['courses.backend.CoursesDatabaseRouter']

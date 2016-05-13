@@ -2,11 +2,14 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, resolve_url
+from django.shortcuts import render, resolve_url, get_object_or_404
 from django.contrib.auth import login
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
+from extra_views import InlineFormSetView
 
-from courses.forms import LoginForm
+from courses.forms import LoginForm, CourseOfferingFormSet, \
+    CourseOfferingFormSetHelper, CourseOfferingForm
+from courses.models import CourseOffering, Course, Professor
 
 
 def index(request):
@@ -55,3 +58,28 @@ class LoginView(FormView):
             redirect_to = resolve_url(settings.LOGIN_URL)
         return redirect_to
 
+
+class SelectCoursesView(InlineFormSetView):
+    model = Professor
+    inline_model = CourseOffering
+    form_class = CourseOfferingForm
+    template_name = 'courses/professor_select_courses.html'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Professor, pk=self.request.user.id)
+
+    def get_context_data(self, **kwargs):
+        data = super(SelectCoursesView, self).get_context_data(**kwargs)
+        data['helper'] = CourseOfferingFormSetHelper()
+        data['user_id'] = self.request.user.id
+        professor_courses = CourseOffering.objects.all().values_list('course_title', flat=True)
+        data['courses'] = Course.objects.all().exclude(course_title__in=list(professor_courses)).values_list('course_title', flat=True)
+        if self.request.POST:
+            data['formset'] = CourseOfferingFormSet(self.request.POST)
+        else:
+            data['formset'] = CourseOfferingFormSet(instance=self.request.user)
+        return data
+
+
+class PutMarksView(TemplateView):
+    template_name = 'courses/professor_put_marks.html'

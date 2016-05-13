@@ -5,6 +5,7 @@
 {% block extrastyle %}{% endblock %}
 <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+{% block extrascript %}{% endblock %}
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -19,7 +20,6 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="#">Home</a></li>
                 <li><a href="#">About</a></li>
                 <li><a href="#">Contact</a></li>
                 <li class="dropdown">
@@ -45,18 +45,11 @@
                              {% endif %}">Welcome, {{ user.first_name }}.</a></li>
                 <li><a href="{% url 'courses:logout' %}?next={% url 'courses:login' %}"> Logout</a></li>
             {% else %}
-                <span><a href="{% url 'courses:login' %}" class="btn btn-primary btn-md" role="button">Login</a></span>
+                <a href="{% url 'courses:login' %}" class="btn btn-primary btn-md" role="button">Login</a>
             {% endif %}
             </ul>
         </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->
 </nav>
-<div class="container">
 {% block content %}
 {% endblock %}
-</div>
-<footer class="footer">
-    <div class="container">
-        <p class="text-muted" align="center">Belarusian State University. &copy; Copyright 2016</p>
-    </div>
-</footer>

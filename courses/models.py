@@ -85,6 +85,7 @@ class Student(User):
 
 class CourseOffering(models.Model):
     professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
+    course_title = models.CharField(_('course title'), max_length=100)
     prerequisites = models.TextField(_('prerequisites'), max_length=500, blank=True)
 
 
@@ -94,3 +95,12 @@ class ReportCard(models.Model):
     second_mark = models.IntegerField(_('second mark'), null=True)
     third_mark = models.IntegerField(_('third mark'), null=True)
     forth_mark = models.IntegerField(_('forth mark'), null=True)
+
+
+class Course(models.Model):
+    id = models.IntegerField(primary_key=True)
+    course_title = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'courses'

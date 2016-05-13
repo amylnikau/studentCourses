@@ -20,3 +20,12 @@ class ModelBackend(BaseModelBackend):
             # Run the default password hasher once to reduce the timing
             # difference between an existing and a non-existing user (#20760).
             UserModel().set_password(password)
+
+
+class CoursesDatabaseRouter(object):
+
+    def db_for_read(self, model, **hints):
+
+        if model._meta.verbose_name == 'course':
+            return 'external'
+        return None

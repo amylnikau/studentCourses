@@ -1,0 +1,44 @@
+/* Set gray background color and 100% height */
+.sidenav {
+    background-color: #f1f1f1;
+    height: 100%;
+}
+
+.btn {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+textarea {
+    resize: none;
+    transition: all 0.5s ease;
+}
+
+textarea:focus {
+    height: 6em;
+}
+
+[type=checkbox] {
+    width: 20px;
+    height: 20px;
+}
+
+.fixed-table {
+    display: block;
+    position: relative;
+}
+
+.fixed-table .table-content {
+    display: block;
+    position: relative;
+    height: 400px;
+    overflow-y: auto;
+}
+
+.fixed-table .table-copy, .fixed-table .header-copy {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1020;
+    background-color: #fff;
+}
